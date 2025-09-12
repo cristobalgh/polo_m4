@@ -25,6 +25,8 @@ btn_pausa.pull = digitalio.Pull.UP
 BLINK =     True #parpadeo de los dos puntos
 DEBUG =     False
 PRUEBAS =   False #mas rapido para probar
+WIDTH   =   64*1 #leds de todas las matrices en uso
+HEIGHT  =   32*1 #leds de todas las matrices en uso
 
 if not DEBUG:
     font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf")
@@ -33,23 +35,23 @@ else:
     font = terminalio.FONT
 
 if PRUEBAS:
-    TIMER_LENGTH 	= 5 #segundos
+    TIMER_LENGTH_1	= 5 #segundos
     TIMER_LENGTH_2 	= 3
     TIMER_LENGTH_3 	= 2
 else:
     # set the timer length por etapa
-    TIMER_LENGTH 	= 60*7 #segundos
+    TIMER_LENGTH_1	= 60*7 #segundos
     TIMER_LENGTH_2 	= 30
     TIMER_LENGTH_3 	= 60*3
 
 # --- Display setup ---
-matrix = Matrix(width=64*1,height=32*1, rotation=180, color_order='RBG')
+matrix = Matrix(width=WIDTH,height=HEIGHT, rotation=180, color_order='RBG')
 
 display = matrix.display
 
 # --- Drawing setup ---
 group = displayio.Group()  # Create a Group
-bitmap = displayio.Bitmap(64, 32, 1)  # Create a bitmap object,width, height, bit depth
+bitmap = displayio.Bitmap(WIDTH, HEIGHT, 1)  # Create a bitmap object,width, height, bit depth
 color = displayio.Palette(4)  # Create a color palette
 color[0] = 0x000000  # black background
 color[1] = 0xFF0000  # red      R
@@ -74,10 +76,8 @@ def update_time(remaining_time, etapa, pausa):
     seconds = remaining_time % 60
     minutes = remaining_time // 60
 
-    if BLINK and not pausa:
+    if BLINK:
         colon = ":" if now[5] % 2 else "\u0020" #los segundos...
-    else:
-        colon = ":"
     
     clock_label.text = "{minutes:01d}{colon}{seconds:02d}".format(
         minutes=minutes, seconds=seconds, colon=colon)
@@ -99,7 +99,7 @@ def update_time(remaining_time, etapa, pausa):
         remaining_time += 1
     if remaining_time < 0:
         if etapa == 1:
-            remaining_time = TIMER_LENGTH
+            remaining_time = TIMER_LENGTH_1
             etapa = 2
             campana.value = True
             time.sleep(2)
@@ -119,9 +119,9 @@ def update_time(remaining_time, etapa, pausa):
     return remaining_time, etapa
 
 def main():
-    remaining_time = TIMER_LENGTH #implica que parte en la etapa 1
+    remaining_time = TIMER_LENGTH_1 #implica que parte en la etapa 1
     etapa = 2 #siguiente etapa
-    pausa = False
+    pausa = False #para el boton de pausa
 
     while True:
         if not btn_pausa.value:
@@ -135,7 +135,7 @@ def main():
             print("abajo")
             remaining_time -= 5
         elif not arriba.value and not abajo.value: #arriba y abajo al mismo tiempo = reset
-            remaining_time = TIMER_LENGTH
+            remaining_time = TIMER_LENGTH_1
             etapa = 2
 
         remaining_time, etapa = update_time(remaining_time, etapa, pausa)
