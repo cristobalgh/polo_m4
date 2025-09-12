@@ -1,15 +1,13 @@
-# Purpose: Timer for polo
-#import random
-#import neopixel
-import microcontroller # type: ignore
-import time # type: ignore
-import board # type: ignore
-import digitalio # type: ignore
-import displayio # type: ignore
-import terminalio # type: ignore
-from adafruit_display_text.label import Label # type: ignore
-from adafruit_bitmap_font import bitmap_font # type: ignore
-from adafruit_matrixportal.matrix import Matrix # type: ignore
+#Purpose: Timer for polo
+import microcontroller
+import time
+import board
+import digitalio
+import displayio
+import terminalio
+from adafruit_display_text.label import Label
+from adafruit_bitmap_font import bitmap_font
+from adafruit_matrixportal.matrix import Matrix
 
 # --- entradas y salidas setup ---
 campana = digitalio.DigitalInOut(board.LED) #LED, A1, A2, A3, A4
@@ -24,9 +22,9 @@ btn_pausa = digitalio.DigitalInOut(board.A1)
 btn_pausa.direction = digitalio.Direction.INPUT
 btn_pausa.pull = digitalio.Pull.UP
 
-BLINK = True #parpadeo de los dos puntos
-DEBUG = True
-PRUEBAS = True #mas rapido para probar
+BLINK =     True #parpadeo de los dos puntos
+DEBUG =     False
+PRUEBAS =   False #mas rapido para probar
 
 if not DEBUG:
     font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf")
@@ -40,12 +38,12 @@ if PRUEBAS:
     TIMER_LENGTH_3 	= 2
 else:
     # set the timer length por etapa
-    TIMER_LENGTH 	= 60#*99 #segundos
-    TIMER_LENGTH_2 	= 60
-    TIMER_LENGTH_3 	= 60#*3
+    TIMER_LENGTH 	= 60*7 #segundos
+    TIMER_LENGTH_2 	= 30
+    TIMER_LENGTH_3 	= 60*3
 
 # --- Display setup ---
-matrix = Matrix(width=64*1,height=32*1, rotation=180)
+matrix = Matrix(width=64*1,height=32*1, rotation=180, color_order='RBG')
 
 display = matrix.display
 
@@ -54,9 +52,9 @@ group = displayio.Group()  # Create a Group
 bitmap = displayio.Bitmap(64, 32, 1)  # Create a bitmap object,width, height, bit depth
 color = displayio.Palette(4)  # Create a color palette
 color[0] = 0x000000  # black background
-color[1] = 0xFF0000  # red
-color[2] = 0xFF00FF  # yellow
-color[3] = 0x3DEB34  # green
+color[1] = 0xFF0000  # red      R
+color[2] = 0x00FF00  # verde    G
+color[3] = 0x0000FF  # azul     B
 
 # Create a TileGrid using the Bitmap and Palette
 tile_grid = displayio.TileGrid(bitmap, pixel_shader=color)
@@ -84,28 +82,12 @@ def update_time(remaining_time, etapa, pausa):
     clock_label.text = "{minutes:01d}{colon}{seconds:02d}".format(
         minutes=minutes, seconds=seconds, colon=colon)
 
-    #clock_label.text = "{seconds:02d}".format(seconds=seconds)
-
-    # if remaining_time <= 5:
-    #     clock_label.color = color[1]
-    # elif remaining_time <= 10:
-    #     clock_label.color = color[2]
-    # elif remaining_time > 15:
-    #     clock_label.color = color[3]
-
     if etapa == 1:
         clock_label.color = color[1]
     elif etapa == 2:
         clock_label.color = color[2]
     elif etapa == 3:
         clock_label.color = color[3]
-
-    #clock_label.color = color[random.choice([1,2,3])]
-
-    #bbx, bby, bbwidth, bbh = clock_label.bounding_box
-    # Center the label
-    #clock_label.x = round(display.width / 2 - bbwidth / 2)
-    #clock_label.y = display.height // 2
     
     if DEBUG:
         print("Label bounding box: {},{},{},{}".format(bbx, bby, bbwidth, bbh))
@@ -157,7 +139,8 @@ def main():
             etapa = 2
 
         remaining_time, etapa = update_time(remaining_time, etapa, pausa)
-        print("TempCpu: {} ℃".format(microcontroller.cpu.temperature))
+        print("tempCpu: {:.0f} ℃".format(microcontroller.cpu.temperature))
+        print("cronoPolo on M4")
         time.sleep(1) #cuento segundos
 
 if __name__ == "__main__":
