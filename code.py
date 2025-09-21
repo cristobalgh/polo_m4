@@ -22,15 +22,17 @@ btn_pausa = digitalio.DigitalInOut(board.A1)
 btn_pausa.direction = digitalio.Direction.INPUT
 btn_pausa.pull = digitalio.Pull.UP
 
-BLINK =     True #parpadeo de los dos puntos
+BLINK =     False #parpadeo de los dos puntos
 DEBUG =     False
 PRUEBAS =   False #mas rapido para probar
-WIDTH   =   64*1 #leds de todas las matrices en uso
-HEIGHT  =   32*1 #leds de todas las matrices en uso
+WIDTH   =   64*3 #leds de todas las matrices en uso
+HEIGHT  =   32*3 #leds de todas las matrices en uso
 
 if not DEBUG:
-    font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf")
+    #font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf")
     #font = bitmap_font.load_font("/Roboto-Regular-78.bdf") #grande
+    font = bitmap_font.load_font("/UbuntuMono-Regular-90.bdf") #grande
+
 else:
     font = terminalio.FONT
 
@@ -45,7 +47,8 @@ else:
     TIMER_LENGTH_3 	= 60*3
 
 # --- Display setup ---
-matrix = Matrix(width=WIDTH,height=HEIGHT, rotation=180, color_order='RBG')
+#matrix = Matrix(width=WIDTH,height=HEIGHT, rotation=0, color_order='RGB', serpentine=True)
+matrix = Matrix(width=WIDTH,height=HEIGHT,tile_rows=3, rotation=180, color_order='RGB')
 
 display = matrix.display
 
@@ -78,6 +81,8 @@ def update_time(remaining_time, etapa, pausa):
 
     if BLINK:
         colon = ":" if now[5] % 2 else "\u0020" #los segundos...
+    else:
+        colon = ":"
     
     clock_label.text = "{minutes:01d}{colon}{seconds:02d}".format(
         minutes=minutes, seconds=seconds, colon=colon)
@@ -129,19 +134,19 @@ def main():
         #else:
         #    pausa = False
         if not arriba.value and abajo.value:
-            print("arriba")
+            #print("arriba")
             remaining_time += 5
         elif not abajo.value and arriba.value:
-            print("abajo")
+            #print("abajo")
             remaining_time -= 5
         elif not arriba.value and not abajo.value: #arriba y abajo al mismo tiempo = reset
             remaining_time = TIMER_LENGTH_1
             etapa = 2
 
         remaining_time, etapa = update_time(remaining_time, etapa, pausa)
-        print("tempCpu: {:.0f} ℃".format(microcontroller.cpu.temperature))
-        print("cronoPolo on M4")
-        time.sleep(1) #cuento segundos
+        #print("tempCpu: {:.0f} ℃".format(microcontroller.cpu.temperature))
+        #print("cronoPolo on M4")
+        time.sleep(1.0) #cuento segundos
 
 if __name__ == "__main__":
     main()

@@ -1,3 +1,3 @@
-Adafruit CircuitPython 9.2.9 on 2025-09-07; Adafruit Matrix Portal M4 with samd51j19
-Board ID:matrixportal_m4
-UID:A05CF51E4E384B53202020521A4016FF
+Adafruit CircuitPython 9.2.9 on 2025-09-07; Adafruit MatrixPortal S3 with ESP32S3
+Board ID:adafruit_matrixportal_s3
+UID:47D4DBF36F4E
