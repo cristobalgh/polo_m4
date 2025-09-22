@@ -1,5 +1,5 @@
 #Purpose: Timer for polo
-#import microcontroller
+#import microcontroller #para ver temp de cpu
 import time
 import board
 import digitalio
@@ -9,6 +9,7 @@ from adafruit_display_text.label import Label
 from adafruit_bitmap_font import bitmap_font
 from adafruit_matrixportal.matrix import Matrix
 
+#region entradas salidas variables pruebas fuente
 # --- entradas y salidas setup ---
 campana = digitalio.DigitalInOut(board.LED) #LED, A1, A2, A3, A4
 campana.direction = digitalio.Direction.OUTPUT
@@ -32,10 +33,8 @@ if not DEBUG:
     #font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf") #1*32x64
     #font = bitmap_font.load_font("/Roboto-Regular-78.bdf")         #4*32x64
     font = bitmap_font.load_font("/UbuntuMono-Regular-89.bdf")      #9*32x64
-
 else:
     font = terminalio.FONT
-
 if PRUEBAS:
     timer_etapa1	= 5 #segundos
     timer_etapa2 	= 4
@@ -45,6 +44,7 @@ else:
     timer_etapa1	= 60*7 #segundos
     timer_etapa2 	= 30
     timer_etapa3 	= 60*3
+#endregion
 
 # --- Display setup ---
 matrix = Matrix(width=WIDTH,height=HEIGHT,tile_rows=3, rotation=180, color_order='RGB')
