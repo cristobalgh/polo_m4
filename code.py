@@ -29,9 +29,9 @@ WIDTH   =   64*3 #leds de todas las matrices en uso
 HEIGHT  =   32*3 #leds de todas las matrices en uso
 
 if not DEBUG:
-    #font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf")
-    #font = bitmap_font.load_font("/Roboto-Regular-78.bdf") #grande
-    font = bitmap_font.load_font("/UbuntuMono-Regular-90.bdf") #mas grande
+    #font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf") #1*32x64
+    #font = bitmap_font.load_font("/Roboto-Regular-78.bdf")         #4*32x64
+    font = bitmap_font.load_font("/UbuntuMono-Regular-89.bdf")      #9*32x64
 
 else:
     font = terminalio.FONT
