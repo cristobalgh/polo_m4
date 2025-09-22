@@ -1,5 +1,5 @@
 #Purpose: Timer for polo
-import microcontroller
+#import microcontroller
 import time
 import board
 import digitalio
@@ -22,32 +22,31 @@ btn_pausa = digitalio.DigitalInOut(board.A1)
 btn_pausa.direction = digitalio.Direction.INPUT
 btn_pausa.pull = digitalio.Pull.UP
 
-BLINK =     False #parpadeo de los dos puntos
+BLINK =     True #parpadeo de los dos puntos
 DEBUG =     False
-PRUEBAS =   False #mas rapido para probar
+PRUEBAS =   True #mas rapido para probar
 WIDTH   =   64*3 #leds de todas las matrices en uso
 HEIGHT  =   32*3 #leds de todas las matrices en uso
 
 if not DEBUG:
     #font = bitmap_font.load_font("/IBMPlexMono-Medium-24_jep.bdf")
     #font = bitmap_font.load_font("/Roboto-Regular-78.bdf") #grande
-    font = bitmap_font.load_font("/UbuntuMono-Regular-90.bdf") #grande
+    font = bitmap_font.load_font("/UbuntuMono-Regular-90.bdf") #mas grande
 
 else:
     font = terminalio.FONT
 
 if PRUEBAS:
-    TIMER_LENGTH_1	= 5 #segundos
-    TIMER_LENGTH_2 	= 3
-    TIMER_LENGTH_3 	= 2
+    timer_etapa1	= 5 #segundos
+    timer_etapa2 	= 4
+    timer_etapa3 	= 3
 else:
     # set the timer length por etapa
-    TIMER_LENGTH_1	= 60*7 #segundos
-    TIMER_LENGTH_2 	= 30
-    TIMER_LENGTH_3 	= 60*3
+    timer_etapa1	= 60*7 #segundos
+    timer_etapa2 	= 30
+    timer_etapa3 	= 60*3
 
 # --- Display setup ---
-#matrix = Matrix(width=WIDTH,height=HEIGHT, rotation=0, color_order='RGB', serpentine=True)
 matrix = Matrix(width=WIDTH,height=HEIGHT,tile_rows=3, rotation=180, color_order='RGB')
 
 display = matrix.display
@@ -70,7 +69,7 @@ clock_label.color = color[0]   #en negro para que no se vea nada
 clock_label.text = "0:00" #aca lo que va a aparece para que lo centre
 bbx, bby, bbwidth, bbh = clock_label.bounding_box
 clock_label.x = round(display.width / 2 - bbwidth / 2)
-clock_label.y = display.height // 2 - 1 #correccion minima en y
+clock_label.y = display.height // 2 - 5 #correccion minima en y
 group.append(clock_label)
 
 def update_time(remaining_time, etapa, pausa):
@@ -104,19 +103,19 @@ def update_time(remaining_time, etapa, pausa):
         remaining_time += 1
     if remaining_time < 0:
         if etapa == 1:
-            remaining_time = TIMER_LENGTH_1
+            remaining_time = timer_etapa1
             etapa = 2
             campana.value = True
             time.sleep(2)
             campana.value = False
         elif etapa == 2:
-            remaining_time = TIMER_LENGTH_2
+            remaining_time = timer_etapa2
             etapa = 3
             campana.value = True
             time.sleep(2)
             campana.value = False
         else:
-            remaining_time = TIMER_LENGTH_3
+            remaining_time = timer_etapa3
             etapa = 1
             campana.value = True
             time.sleep(2)
@@ -124,7 +123,7 @@ def update_time(remaining_time, etapa, pausa):
     return remaining_time, etapa
 
 def main():
-    remaining_time = TIMER_LENGTH_1 #implica que parte en la etapa 1
+    remaining_time = timer_etapa1 #parte en la etapa 1
     etapa = 2 #siguiente etapa
     pausa = False #para el boton de pausa
 
@@ -140,7 +139,7 @@ def main():
             #print("abajo")
             remaining_time -= 5
         elif not arriba.value and not abajo.value: #arriba y abajo al mismo tiempo = reset
-            remaining_time = TIMER_LENGTH_1
+            remaining_time = timer_etapa1
             etapa = 2
 
         remaining_time, etapa = update_time(remaining_time, etapa, pausa)
